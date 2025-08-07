@@ -1,4 +1,4 @@
-module hsbdsrv-www
+module hbsdsrv-www
 
 go 1.24.4
 
