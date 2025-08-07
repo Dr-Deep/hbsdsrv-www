@@ -1,0 +1,37 @@
+#!/bin/sh
+# /usr/local/etc/rc.d/hbsdsrv
+
+# PROVIDE: hbsdsrv
+# REQUIRE: DAEMON
+# KEYWORD: shutdown
+
+. /etc/rc.subr
+
+name="hbsdsrv"
+rcvar=hbsdsrv_enable
+
+#/usr/local/www/hbsdsrv-www
+
+# Konfigurierbare Parameter
+hbsdsrv_user="www"
+hbsdsrv_group="www"
+hbsdsrv_chdir="/usr/local/www"
+hbsdsrv_command="/usr/local/www/hbsdsrv-www/hbsdsrv-www"
+hbsdsrv_pidfile="/var/run/${name}.pid"
+hbsdsrv_logfile="/var/log/${name}.log"
+
+start_precmd="hbsdsrv_precmd"
+
+hbsdsrv_precmd()
+{
+    # Logging-Verzeichnis sicherstellen
+    install -d -o ${hbsdsrv_user} -g ${hbsdsrv_group} -m 755 /var/log
+    touch "${hbsdsrv_logfile}"
+    chown ${hbsdsrv_user}:${hbsdsrv_group} "${hbsdsrv_logfile}"
+}
+
+command="/usr/sbin/daemon"
+command_args="-f -p ${hbsdsrv_pidfile} -o ${hbsdsrv_logfile} -u ${hbsdsrv_user} -t ${name} ${hbsdsrv_command} -content /usr/local/www/www -templates /usr/local/www"
+
+load_rc_config $name
+run_rc_command "$1"
