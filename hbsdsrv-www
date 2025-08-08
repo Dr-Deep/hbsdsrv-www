@@ -1,37 +1,46 @@
 #!/bin/sh
-# /usr/local/etc/rc.d/hbsdsrv
 
-# PROVIDE: hbsdsrv
+# PROVIDE: hbsdsrv_www
 # REQUIRE: DAEMON
 # KEYWORD: shutdown
 
+# /usr/local/etc/rc.d/hbsdsrv_www
+
+# hbsdsrv_wwww_enable="YES"
+# hbsdsrv_www_args=""
+
 . /etc/rc.subr
 
-name="hbsdsrv"
-rcvar=hbsdsrv_enable
-
-#/usr/local/www/hbsdsrv-www
-
-# Konfigurierbare Parameter
-hbsdsrv_user="www"
-hbsdsrv_group="www"
-hbsdsrv_chdir="/usr/local/www"
-hbsdsrv_command="/usr/local/www/hbsdsrv-www/hbsdsrv-www"
-hbsdsrv_pidfile="/var/run/${name}.pid"
-hbsdsrv_logfile="/var/log/${name}.log"
-
-start_precmd="hbsdsrv_precmd"
-
-hbsdsrv_precmd()
-{
-    # Logging-Verzeichnis sicherstellen
-    install -d -o ${hbsdsrv_user} -g ${hbsdsrv_group} -m 755 /var/log
-    touch "${hbsdsrv_logfile}"
-    chown ${hbsdsrv_user}:${hbsdsrv_group} "${hbsdsrv_logfile}"
-}
-
-command="/usr/sbin/daemon"
-command_args="-f -p ${hbsdsrv_pidfile} -o ${hbsdsrv_logfile} -u ${hbsdsrv_user} -t ${name} ${hbsdsrv_command} -content /usr/local/www/www -templates /usr/local/www"
+name="hbsdsrv_www"
+desc="hbsdsrv-www md to html webserver"
+rcvar=hbsdsrv_www_enable
 
 load_rc_config $name
+
+: ${hbsdsrv_www_enable="NO"}
+: ${hbsdsrv_www_args=""}
+
+
+hbsdsrv_www_pidfile="/var/run/${name}.pid"
+hbsdsrv_www_logfile="/var/log/${name}.log"
+
+proc="/usr/local/www/hbsdsrv-www/hbsdsrv-www"
+procargs="${hbsdsrv_www_args}"
+command="/usr/sbin/daemon"
+command_args="-f -p ${hbsdsrv_www_pidfile} -o ${hbsdsrv_www_logfile} -t ${name}"
+
+start_cmd() {
+    echo "Launching hbsdsrv-www..."
+    touch ${hbsdsrv_www_logfile}
+    exec ${command} ${command_args} ${proc} ${procargs} || {
+        echo "Failed to start ${name}"
+        return 1
+    }
+}
+
+stop_cmd() {
+    echo "Stopping hbsdsrv-www..."
+    kill -INT ${name} || true
+}
+
 run_rc_command "$1"
