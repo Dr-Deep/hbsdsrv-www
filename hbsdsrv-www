@@ -6,41 +6,38 @@
 
 # /usr/local/etc/rc.d/hbsdsrv_www
 
-# hbsdsrv_wwww_enable="YES"
-# hbsdsrv_www_args=""
-
 . /etc/rc.subr
 
 name="hbsdsrv_www"
-desc="hbsdsrv-www md to html webserver"
 rcvar=hbsdsrv_www_enable
 
 load_rc_config $name
+: ${hbsdsrv_www_enable:=no}
+: ${hbsdsrv_www_args:=""}
 
-: ${hbsdsrv_www_enable="NO"}
-: ${hbsdsrv_www_args=""}
-
+start_cmd="${name}_start"
+stop_cmd="${name}_stop"
 
 hbsdsrv_www_pidfile="/var/run/${name}.pid"
 hbsdsrv_www_logfile="/var/log/${name}.log"
 
 proc="/usr/local/www/hbsdsrv-www/hbsdsrv-www"
 procargs="${hbsdsrv_www_args}"
-command="/usr/sbin/daemon"
-command_args="-f -p ${hbsdsrv_www_pidfile} -o ${hbsdsrv_www_logfile} -t ${name}"
 
-start_cmd() {
+hbsdsrv_www_start() {
     echo "Launching hbsdsrv-www..."
     touch ${hbsdsrv_www_logfile}
-    exec ${command} ${command_args} ${proc} ${procargs} || {
+    /usr/sbin/daemon -f -p ${hbsdsrv_www_pidfile} -o ${hbsdsrv_www_logfile} -t ${name} ${proc} ${procargs} || {
         echo "Failed to start ${name}"
         return 1
     }
 }
 
-stop_cmd() {
+hbsdsrv_www_stop() {
     echo "Stopping hbsdsrv-www..."
-    kill -INT ${name} || true
+    if [ -f "${hbsdsrv_www_pidfile}" ]; then
+        kill -INT "$(cat "${hbsdsrv_www_pidfile}")" || true
+    fi
 }
 
 run_rc_command "$1"
