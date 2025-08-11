@@ -16,7 +16,6 @@ linters:
     - gosimple
     - unused
     - gocyclo
-    - gofmt
     - goimports
     - misspell
     - gocritic
