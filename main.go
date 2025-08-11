@@ -122,6 +122,7 @@ func genIndex(files []string) {
 		indexFilePath = *contentDirPath + "/index.md"
 		index         = strings.Builder{}
 	)
+
 	logger.Debug("generating index file", *indexHTMLSitePath)
 
 	index.WriteString("# Index.md - Overview\n")
@@ -139,7 +140,6 @@ func genIndex(files []string) {
 
 // func(w http.ResponseWriter, r *http.Request)
 func indexHandler(w http.ResponseWriter, r *http.Request) {
-
 	logger.Info(r.RemoteAddr, "=>", r.Method, r.URL.Path)
 
 	// valid path?
@@ -170,6 +170,7 @@ func contentHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Read File
 	var path = *contentDirPath + r.URL.Path
+
 	content, err := os.ReadFile(path)
 	if err != nil {
 		logger.Error("OS ReadFile from", *contentDirPath+r.URL.Path, err.Error())
@@ -213,10 +214,12 @@ func contentHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func setupMux() (*http.ServeMux, error) {
-	var mux = http.NewServeMux()
+	var (
+		mux   = http.NewServeMux()
+		files []string
+	)
 
 	// Scan ContentDir
-	var files []string
 	if err := filepath.Walk(
 		*contentDirPath,
 
@@ -224,11 +227,13 @@ func setupMux() (*http.ServeMux, error) {
 			if err != nil {
 				return err
 			}
+
 			if !info.IsDir() {
 				relPath, err := filepath.Rel(*contentDirPath, path)
 				if err != nil {
 					return err
 				}
+
 				relPath = filepath.ToSlash(relPath) // \ → /
 				uriPath := "/" + relPath
 				files = append(files, uriPath)
