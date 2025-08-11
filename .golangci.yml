@@ -14,6 +14,11 @@ linters:
   # Disable specific linters.
   disable:
     - errcheck
+    - depguard
+    - exhaustruct
+    - gochecknoglobals
+    - godot
+    - gochecknoinits
 
   # All available settings of specific linters.
   settings:
