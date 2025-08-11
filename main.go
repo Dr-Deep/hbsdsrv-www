@@ -59,7 +59,6 @@ var (
 
 func init() {
 	flag.Parse()
-
 }
 
 func main() {
