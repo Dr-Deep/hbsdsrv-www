@@ -123,19 +123,22 @@ func genIndex(files []string) {
 		index         = strings.Builder{}
 	)
 
-	logger.Debug("generating index file", *indexHTMLSitePath)
-
 	index.WriteString("# Index.md - Overview\n")
+
 	for _, file := range files {
 		index.WriteString(
 			fmt.Sprintf("* [%s](%s)\n", file, file),
 		)
+
 		logger.Debug(file) // prefix?
 	}
 
+	//nolint:gosec // file should be public
 	if err := os.WriteFile(indexFilePath, []byte(index.String()), 0444); err != nil { // read for everyone, write for none
 		panic(err)
 	}
+
+	logger.Debug("generated index file", *indexHTMLSitePath)
 }
 
 // func(w http.ResponseWriter, r *http.Request)
@@ -169,11 +172,12 @@ func contentHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Read File
+	//nolint:gosec // file inclusion is the Goal
 	var path = *contentDirPath + r.URL.Path
 
 	content, err := os.ReadFile(path)
 	if err != nil {
-		logger.Error("OS ReadFile from", *contentDirPath+r.URL.Path, err.Error())
+		logger.Error("ReadFile err from", *contentDirPath+r.URL.Path, err.Error())
 		http.Redirect(w, r, *notFoundHTMLURI, http.StatusPermanentRedirect)
 
 		return
@@ -197,6 +201,7 @@ func contentHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// rendern
+	//nolint:gosec // markdown to HTML, no big deal
 	var data = struct {
 		Title   string
 		Content template.HTML
@@ -225,13 +230,13 @@ func setupMux() (*http.ServeMux, error) {
 
 		func(path string, info os.FileInfo, err error) error {
 			if err != nil {
-				return err
+				return fmt.Errorf("got err from filepath.Walk: %s", err.Error())
 			}
 
 			if !info.IsDir() {
 				relPath, err := filepath.Rel(*contentDirPath, path)
 				if err != nil {
-					return err
+					return fmt.Errorf("filepath.Rel path err: %s", err.Error())
 				}
 
 				relPath = filepath.ToSlash(relPath) // \ → /
