@@ -1,3 +1,4 @@
+// publish markdown files via HTTP3
 package main
 
 import (
@@ -67,12 +68,12 @@ var (
 	)
 
 	// Default Sites
-	indexHtmlSitePath = flag.String(
+	indexHTMLSitePath = flag.String(
 		"index",
 		*contentDirPath+"/index.md",
 		"where to put the generated index.md",
 	)
-	notFoundHtmlURI = flag.String(
+	notFoundHTMLURI = flag.String(
 		"404",
 		"/404.html",
 		"404.html URI",
@@ -121,17 +122,17 @@ func genIndex(files []string) {
 		indexFilePath = *contentDirPath + "/index.md"
 		index         = strings.Builder{}
 	)
-	logger.Debug("generating index file", *indexHtmlSitePath)
+	logger.Debug("generating index file", *indexHTMLSitePath)
 
 	index.WriteString("# Index.md - Overview\n")
 	for _, file := range files {
 		index.WriteString(
 			fmt.Sprintf("* [%s](%s)\n", file, file),
 		)
-		logger.Debug(file) //? prefix?
+		logger.Debug(file) // prefix?
 	}
 
-	if err := os.WriteFile(indexFilePath, []byte(index.String()), 0o444); err != nil { // read for everyone, write for none
+	if err := os.WriteFile(indexFilePath, []byte(index.String()), 0444); err != nil { // read for everyone, write for none
 		panic(err)
 	}
 }
@@ -151,7 +152,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	default:
 		// Immer zuerst Status setzen, dann schreiben!
 		w.WriteHeader(http.StatusNotFound)
-		http.Redirect(w, r, *notFoundHtmlURI, http.StatusPermanentRedirect)
+		http.Redirect(w, r, *notFoundHTMLURI, http.StatusPermanentRedirect)
 	}
 }
 
@@ -162,9 +163,9 @@ func contentHandler(w http.ResponseWriter, r *http.Request) {
 	// need okay from uris
 	_, oke := uris[r.URL.Path]
 	if !oke {
-		http.Redirect(w, r, *notFoundHtmlURI, http.StatusPermanentRedirect)
-		return
+		http.Redirect(w, r, *notFoundHTMLURI, http.StatusPermanentRedirect)
 
+		return
 	}
 
 	// Read File
@@ -172,7 +173,7 @@ func contentHandler(w http.ResponseWriter, r *http.Request) {
 	content, err := os.ReadFile(path)
 	if err != nil {
 		logger.Error("OS ReadFile from", *contentDirPath+r.URL.Path, err.Error())
-		http.Redirect(w, r, *notFoundHtmlURI, http.StatusPermanentRedirect)
+		http.Redirect(w, r, *notFoundHTMLURI, http.StatusPermanentRedirect)
 
 		return
 	}
