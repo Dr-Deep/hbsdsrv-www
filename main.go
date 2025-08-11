@@ -30,24 +30,19 @@ dieser teil bekommt von nginx /www
 // uri prefix support/var
 */
 
-const (
-	notFoundHTMLSitePath = "/404.html" // FLAG
-
-	indexHTMLSitePath = ""
-)
-
 var (
 	logger *logging.Logger
 
 	// Global Vars
 	uris = map[string]func(http.ResponseWriter, *http.Request){}
 
-	// Flags
+	// Generell Flags
 	socket = flag.String(
 		"socket",
 		"localhost:8082",
 		"socket to listen on",
 	)
+
 	certFilePath = flag.String(
 		"cert",
 		"./fullchain.pem", // /usr/local/etc/letsencrypt/live/vmd171781.contaboserver.net/fullchain.pem
@@ -58,6 +53,8 @@ var (
 		"./privkey.pem", // /usr/local/etc/letsencrypt/live/vmd171781.contaboserver.net/privkey.pem
 		"ssl key",
 	)
+
+	// Dirs
 	templateDirPath = flag.String(
 		"templates",
 		"./templates", // /usr/local/www
@@ -67,6 +64,23 @@ var (
 		"content",
 		"./content", // /usr/local/www/www
 		"Markdown directory",
+	)
+
+	// Default Sites
+	indexHtmlSitePath = flag.String(
+		"index",
+		*contentDirPath+"/index.md",
+		"where to put the generated index.md",
+	)
+	notFoundHtmlURI = flag.String(
+		"404",
+		"/404.html",
+		"404.html URI",
+	)
+	internalServerErrorURI = flag.String(
+		"50x",
+		"/50x.html",
+		"50x.html URI",
 	)
 )
 
@@ -107,17 +121,17 @@ func genIndex(files []string) {
 		indexFilePath = *contentDirPath + "/index.md"
 		index         = strings.Builder{}
 	)
-	logger.Debug("generating index file", indexFilePath)
+	logger.Debug("generating index file", *indexHtmlSitePath)
 
 	index.WriteString("# Index.md - Overview\n")
 	for _, file := range files {
 		index.WriteString(
 			fmt.Sprintf("* [%s](%s)\n", file, file),
 		)
-		logger.Debug(file)
+		logger.Debug(file) //? prefix?
 	}
 
-	if err := os.WriteFile(indexFilePath, []byte(index.String()), os.ModePerm); err != nil {
+	if err := os.WriteFile(indexFilePath, []byte(index.String()), 0o444); err != nil { // read for everyone, write for none
 		panic(err)
 	}
 }
@@ -137,7 +151,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	default:
 		// Immer zuerst Status setzen, dann schreiben!
 		w.WriteHeader(http.StatusNotFound)
-		http.Redirect(w, r, notFoundHTMLSitePath, http.StatusPermanentRedirect)
+		http.Redirect(w, r, *notFoundHtmlURI, http.StatusPermanentRedirect)
 	}
 }
 
@@ -148,7 +162,7 @@ func contentHandler(w http.ResponseWriter, r *http.Request) {
 	// need okay from uris
 	_, oke := uris[r.URL.Path]
 	if !oke {
-		http.Redirect(w, r, notFoundHTMLSitePath, http.StatusPermanentRedirect)
+		http.Redirect(w, r, *notFoundHtmlURI, http.StatusPermanentRedirect)
 		return
 
 	}
@@ -157,7 +171,8 @@ func contentHandler(w http.ResponseWriter, r *http.Request) {
 	var path = *contentDirPath + r.URL.Path
 	content, err := os.ReadFile(path)
 	if err != nil {
-		http.Redirect(w, r, notFoundHTMLSitePath, http.StatusPermanentRedirect)
+		logger.Error("OS ReadFile from", *contentDirPath+r.URL.Path, err.Error())
+		http.Redirect(w, r, *notFoundHtmlURI, http.StatusPermanentRedirect)
 
 		return
 	}
@@ -174,7 +189,7 @@ func contentHandler(w http.ResponseWriter, r *http.Request) {
 		logger.Error("Template New", err.Error())
 
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("500 – Fehler beim Template"))
+		http.Redirect(w, r, *internalServerErrorURI, http.StatusPermanentRedirect)
 
 		return
 	}
@@ -192,11 +207,10 @@ func contentHandler(w http.ResponseWriter, r *http.Request) {
 		logger.Error("Template Execution", err.Error())
 
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("500 – Template rendering error"))
+		http.Redirect(w, r, *internalServerErrorURI, http.StatusPermanentRedirect)
 	}
 }
 
-// Todo: uri regexp?
 func setupMux() (*http.ServeMux, error) {
 	var mux = http.NewServeMux()
 
@@ -238,14 +252,14 @@ func setupMux() (*http.ServeMux, error) {
 }
 
 func renderMarkdownToHTML(md []byte) string {
-
-	p := parser.New()
-	doc := p.Parse(md)
-
-	r := html.NewRenderer(
-		html.RendererOptions{
-			Flags: html.CommonFlags,
-		},
+	var (
+		p   = parser.New()
+		doc = p.Parse(md)
+		r   = html.NewRenderer(
+			html.RendererOptions{
+				Flags: html.CommonFlags,
+			},
+		)
 	)
 
 	return string(markdown.Render(doc, r))
