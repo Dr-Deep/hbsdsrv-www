@@ -9,20 +9,7 @@
 version: "2"
 
 linters:
-  # Enable specific linter.
-  enable:
-    - govet
-    - staticcheck
-    - gosimple
-    - unused
-    - gocyclo
-    - goimports
-    - misspell
-    - gocritic
-    - nestif
-    - prealloc
-    - unparam
-    - goconst
+  default: all
 
   # Disable specific linters.
   disable:
