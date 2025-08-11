@@ -143,7 +143,7 @@ linters:
       # Correct spellings using locale preferences for US or UK.
       # Setting locale to US will correct the British spelling of 'colour' to 'color'.
       # Default is to use a neutral variety of English.
-      locale: DE
+      locale: US
       # Typos to ignore.
       # Should be in lower case.
       # Default: []
