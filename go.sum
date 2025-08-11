@@ -1,3 +1,5 @@
+github.com/Dr-Deep/logging-go v0.0.0-20250811193952-0f12434325d9 h1:/eVhUS+C2zOVm+KzKe8IozGwO90N7EqZjKstgkIbNTE=
+github.com/Dr-Deep/logging-go v0.0.0-20250811193952-0f12434325d9/go.mod h1:IrE0MUd7Je7zubSkAiI3VvF6INjbyCVz30RwIHtZk8U=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/gomarkdown/markdown v0.0.0-20250731182530-5d03d1963446 h1:DCrj2T/IjH7beow847X2wc/lQRAQlvUQYxCyZE9wA+E=

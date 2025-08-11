@@ -1,8 +1,9 @@
 module hbsdsrv-www
 
-go 1.24.4
+go 1.24.6
 
 require (
+	github.com/Dr-Deep/logging-go v0.0.0-20250811193952-0f12434325d9
 	github.com/gomarkdown/markdown v0.0.0-20250731182530-5d03d1963446
 	github.com/quic-go/quic-go v0.54.0
 )
