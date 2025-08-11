@@ -80,7 +80,10 @@ func setupLogger() {
 }
 
 func main() {
-	var mux = setupMux()
+	mux, err := setupMux()
+	if err != nil {
+		panic(err)
+	}
 
 	logger.Info("listening on",
 		fmt.Sprintf("https://%s/", *socket),
@@ -146,6 +149,8 @@ func contentHandler(w http.ResponseWriter, r *http.Request) {
 	_, oke := uris[r.URL.Path]
 	if !oke {
 		http.Redirect(w, r, notFoundHTMLSitePath, http.StatusPermanentRedirect)
+		return
+
 	}
 
 	// Read File
@@ -153,6 +158,8 @@ func contentHandler(w http.ResponseWriter, r *http.Request) {
 	content, err := os.ReadFile(path)
 	if err != nil {
 		http.Redirect(w, r, notFoundHTMLSitePath, http.StatusPermanentRedirect)
+
+		return
 	}
 
 	htmlContent := renderMarkdownToHTML(content)
@@ -164,8 +171,11 @@ func contentHandler(w http.ResponseWriter, r *http.Request) {
 		}).
 		ParseFiles(filepath.Join(*templateDirPath, "base.html"))
 	if err != nil {
+		logger.Error("Template New", err.Error())
+
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("500 – Fehler beim Template"))
+
 		return
 	}
 
@@ -179,19 +189,22 @@ func contentHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := tmpl.Execute(w, data); err != nil {
+		logger.Error("Template Execution", err.Error())
+
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("500 – Template rendering error"))
 	}
 }
 
 // Todo: uri regexp?
-func setupMux() (mux *http.ServeMux) {
-	mux = http.NewServeMux()
+func setupMux() (*http.ServeMux, error) {
+	var mux = http.NewServeMux()
 
 	// Scan ContentDir
 	var files []string
 	if err := filepath.Walk(
 		*contentDirPath,
+
 		func(path string, info os.FileInfo, err error) error {
 			if err != nil {
 				return err
@@ -207,10 +220,11 @@ func setupMux() (mux *http.ServeMux) {
 
 				uris[uriPath] = contentHandler
 			}
+
 			return nil
 		},
 	); err != nil {
-		logger.Error(err.Error())
+		return nil, err
 	}
 
 	genIndex(files)
@@ -220,7 +234,7 @@ func setupMux() (mux *http.ServeMux) {
 		mux.HandleFunc(p, f)
 	}
 
-	return
+	return mux, nil
 }
 
 func renderMarkdownToHTML(md []byte) string {
@@ -233,5 +247,6 @@ func renderMarkdownToHTML(md []byte) string {
 			Flags: html.CommonFlags,
 		},
 	)
+
 	return string(markdown.Render(doc, r))
 }
