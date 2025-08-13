@@ -20,6 +20,10 @@ linters:
     - godot
     - gochecknoinits
     - varnamelen
+    - revive
+    - ireturn
+    - wrapcheck
+    - tagliatelle
 
   # All available settings of specific linters.
   settings:
