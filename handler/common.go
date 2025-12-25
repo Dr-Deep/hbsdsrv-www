@@ -14,6 +14,7 @@ import (
 
 const (
 	indexHTML = "./html/index.html"
+	loginHTML = "./html/login.html"
 	errorHTML = "./html/error.html"
 	baseHTML  = "./html/base.html"
 
