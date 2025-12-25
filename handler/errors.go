@@ -7,6 +7,7 @@ package handler
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 )
 
 var errorMessages = map[int]string{
@@ -43,7 +44,7 @@ var errorMessages = map[int]string{
 
 func Error(w http.ResponseWriter, code int) {
 	var (
-		errorType    = fmt.Sprintf("%v", code)
+		errorType    = strconv.Itoa(code)
 		errorMessage = "invalid."
 	)
 

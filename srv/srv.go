@@ -52,6 +52,13 @@ func (www *Server) Start() error {
 	return www.run()
 }
 
+func (www *Server) Stop() {
+	www.logger.Info("received stop signal")
+	www.Lock()
+	www.logger.Info("stopping...")
+	os.Exit(0)
+}
+
 func (www *Server) run() error {
 	defer www.handlePanic()
 
@@ -75,11 +82,4 @@ func (www *Server) handlePanic() {
 		www.logger.Error("PANIC", fmt.Sprintf("%#v", r))
 		www.Stop()
 	}
-}
-
-func (www *Server) Stop() {
-	www.logger.Info("received stop signal")
-	www.Lock()
-	www.logger.Info("stopping...")
-	os.Exit(0)
 }

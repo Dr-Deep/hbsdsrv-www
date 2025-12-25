@@ -32,7 +32,11 @@ func genIndex(contentPaths map[string]string) error {
 
 	{ // store (should be public)
 		//nolint:gosec
-		if err := os.WriteFile(contentMdIndex, []byte(index.String()), 0444); err != nil { // read for everyone, write for none
+		if err := os.WriteFile(
+			contentMdIndex,
+			[]byte(index.String()),
+			0444,
+		); err != nil { // read for everyone, write for none
 			return err
 		}
 	}
@@ -77,11 +81,7 @@ func NewHandlerContent(logger *logging.Logger, cfg *config.Configuration) *Handl
 }
 
 func (h *HandlerContent) IsAble(url *url.URL) bool {
-	if strings.HasPrefix(url.Path, contentURL) {
-		return true
-	}
-
-	return false
+	return strings.HasPrefix(url.Path, contentURL)
 }
 
 func (h *HandlerContent) Handle(w http.ResponseWriter, r *http.Request) error {
@@ -117,7 +117,7 @@ func (h *HandlerContent) Handle(w http.ResponseWriter, r *http.Request) error {
 			Title   string
 			Content template.HTML
 		}{
-			Title:   fmt.Sprintf("hbsdsrv - %s", r.URL.Path),
+			Title:   "hbsdsrv - " + r.URL.Path,
 			Content: htmlContent,
 		},
 	)

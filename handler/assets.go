@@ -33,11 +33,7 @@ func NewHandlerAssets(logger *logging.Logger, cfg *config.Configuration) *Handle
 }
 
 func (h *HandlerAssets) IsAble(url *url.URL) bool {
-	if strings.HasPrefix(url.Path, assetsURL) {
-		return true
-	}
-
-	return false
+	return strings.HasPrefix(url.Path, assetsURL)
 }
 
 func (h *HandlerAssets) Handle(w http.ResponseWriter, r *http.Request) error {

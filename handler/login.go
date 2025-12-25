@@ -35,11 +35,7 @@ func NewHandlerLogin(logger *logging.Logger, cfg *config.Configuration) *Handler
 }
 
 func (h *HandlerLogin) IsAble(url *url.URL) bool {
-	if url.Path == "/login" {
-		return true
-	}
-
-	return false
+	return (url.Path == "/login")
 }
 
 func (h *HandlerLogin) Handle(w http.ResponseWriter, r *http.Request) error {
