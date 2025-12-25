@@ -17,7 +17,7 @@ type Handler interface {
 }
 
 func (www *WWWServer) Handle(w http.ResponseWriter, r *http.Request) {
-	www.logger.Info(r.RemoteAddr, "=>", r.Method, r.RequestURI)
+	www.logger.Info(r.RemoteAddr, trunc(r.UserAgent()), "=>", r.Method, r.RequestURI)
 
 	// Allowed Host filter
 	if r.Host != www.cfg.Application.AllowedHost {
