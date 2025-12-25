@@ -66,6 +66,7 @@ func (www *WWWServer) run() error {
 		}
 	}()
 
+	www.logger.Info("listening on", www.cfg.Server.Address)
 	return http.ListenAndServe(www.cfg.Server.Address, www.mux)
 }
 
@@ -76,4 +77,9 @@ func (www *WWWServer) handlePanic() {
 	}
 }
 
-func (www *WWWServer) Stop() {}
+func (www *WWWServer) Stop() {
+	www.logger.Info("received stop signal")
+	www.Lock()
+	www.logger.Info("stopping...")
+	os.Exit(0)
+}
