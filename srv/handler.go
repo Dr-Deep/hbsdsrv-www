@@ -8,15 +8,12 @@ import (
 	"github.com/Dr-Deep/hbsdsrv-www/handler"
 )
 
-/*
-! ratelimit by nginx
-*/
 type Handler interface {
 	IsAble(url *url.URL) bool
 	Handle(w http.ResponseWriter, r *http.Request) error
 }
 
-func (www *WWWServer) Handle(w http.ResponseWriter, r *http.Request) {
+func (www *Server) Handle(w http.ResponseWriter, r *http.Request) {
 	www.logger.Info(r.RemoteAddr, trunc(r.UserAgent()), "=>", r.Method, r.RequestURI)
 
 	// Allowed Host filter

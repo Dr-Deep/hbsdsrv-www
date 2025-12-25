@@ -56,7 +56,7 @@ func (h *HandlerAssets) Handle(w http.ResponseWriter, r *http.Request) error {
 	b, err := os.ReadFile(fsPath) // file inclusion is the Goal
 	if err != nil {
 		Error(w, http.StatusInternalServerError)
-		//? log
+		h.logger.Error("file reading error", err.Error())
 		return nil
 	}
 

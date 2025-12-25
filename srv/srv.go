@@ -12,7 +12,7 @@ import (
 	"github.com/Dr-Deep/logging-go"
 )
 
-type WWWServer struct {
+type Server struct {
 	// handler, paths, logging
 
 	mux      *http.ServeMux
@@ -25,8 +25,8 @@ type WWWServer struct {
 	sync.Mutex
 }
 
-func New(mux *http.ServeMux, handlers []Handler, logger *logging.Logger, cfg *config.Configuration) *WWWServer {
-	return &WWWServer{
+func New(mux *http.ServeMux, handlers []Handler, logger *logging.Logger, cfg *config.Configuration) *Server {
+	return &Server{
 		mux:          mux,
 		handlers:     handlers,
 		logger:       logger,
@@ -35,7 +35,7 @@ func New(mux *http.ServeMux, handlers []Handler, logger *logging.Logger, cfg *co
 	}
 }
 
-func (www *WWWServer) Start() error {
+func (www *Server) Start() error {
 	www.Lock()
 
 	// OS Signals
@@ -52,12 +52,14 @@ func (www *WWWServer) Start() error {
 	return www.run()
 }
 
-func (www *WWWServer) run() error {
+func (www *Server) run() error {
 	defer www.handlePanic()
 
 	go func() {
 		for {
 			select {
+			//case reload?
+
 			case <-www.interuptSigs:
 				www.Stop()
 			}
@@ -68,14 +70,14 @@ func (www *WWWServer) run() error {
 	return http.ListenAndServe(www.cfg.Server.Address, www.mux)
 }
 
-func (www *WWWServer) handlePanic() {
+func (www *Server) handlePanic() {
 	if r := recover(); r != nil {
 		www.logger.Error("PANIC", fmt.Sprintf("%#v", r))
 		www.Stop()
 	}
 }
 
-func (www *WWWServer) Stop() {
+func (www *Server) Stop() {
 	www.logger.Info("received stop signal")
 	www.Lock()
 	www.logger.Info("stopping...")

@@ -18,7 +18,8 @@ const (
 	errorHTML = "./html/error.html"
 	baseHTML  = "./html/base.html"
 
-	assetsURL = "/assets"
+	contentURL = "/www"
+	assetsURL  = "/assets"
 )
 
 /*

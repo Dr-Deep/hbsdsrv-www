@@ -1,3 +1,7 @@
+/*
+* Error server
+ */
+
 package handler
 
 import (

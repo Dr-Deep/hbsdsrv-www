@@ -1,3 +1,6 @@
+/*
+ * troll some folks
+ */
 package handler
 
 import (
@@ -5,10 +8,6 @@ import (
 	"net/http"
 	"net/url"
 )
-
-/*
- * troll some folks
- */
 
 const trollGitConfigFile = `[user]
 name = your mommy
