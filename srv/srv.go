@@ -16,7 +16,8 @@ import (
 type WWWServer struct {
 	// handler, paths, logging
 
-	mux *http.ServeMux
+	mux      *http.ServeMux
+	handlers []Handler
 
 	logger *logging.Logger
 	cfg    *config.Configuration
@@ -25,7 +26,7 @@ type WWWServer struct {
 	sync.Mutex
 }
 
-func New(mux *http.ServeMux, logger *logging.Logger, cfg *config.Configuration) *WWWServer {
+func New(mux *http.ServeMux, handler []Handler, logger *logging.Logger, cfg *config.Configuration) *WWWServer {
 
 	var www = &WWWServer{
 		mux:          mux,
@@ -47,7 +48,7 @@ func (www *WWWServer) Start() error {
 		syscall.SIGTERM,
 	)
 
-	www.mux.HandleFunc("/", www.Handler)
+	www.mux.HandleFunc("/", www.Handle)
 
 	www.Unlock()
 

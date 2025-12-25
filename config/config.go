@@ -6,10 +6,11 @@ type Configuration struct {
 	} `yaml:"server"`
 
 	Application struct {
-		Handler        []string `yaml:"handler"`
-		AllowedOrigins []string `yaml:"allowed-origins"`
-		HTMLDirectory  string   `yaml:"html-dir"`
-		WWWDirectory   string   `yaml:"www-dir"`
+		Handler         []string `yaml:"handler"`
+		AllowedHost     string   `yaml:"allowed-host"`
+		HTMLDirectory   string   `yaml:"html-dir"`
+		WWWDirectory    string   `yaml:"www-dir"`
+		AssetsDirectory string   `yaml:"assets-dir"`
 	} `yaml:"application"`
 
 	Logging struct {

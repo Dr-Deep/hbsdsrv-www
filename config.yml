@@ -3,9 +3,10 @@ server:
 
 application:
     handler: []
-    allowed-origins: []
+    allowed-host: "hbsdsrv.1337.cx"
     html-dir: "./html"
     www-dir: "./www"
+    assets-dir: "./assets"
 
 logging:
     file: ""

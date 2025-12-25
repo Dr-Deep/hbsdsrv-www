@@ -9,6 +9,7 @@ import (
 	"os"
 
 	"github.com/Dr-Deep/hbsdsrv-www/config"
+	"github.com/Dr-Deep/hbsdsrv-www/handler"
 	"github.com/Dr-Deep/hbsdsrv-www/srv"
 	"github.com/Dr-Deep/logging-go"
 )
@@ -83,8 +84,16 @@ func main() {
 		logger = initLogger(cfg.Logging.File, cfg.Logging.Level)
 	)
 
+	var _handlers = []srv.Handler{
+		&handler.HandlerIndex{},
+		handler.NewHandlerAssets(logger, cfg),
+		&handler.HandlerContent{},
+		&handler.HandlerTroll{},
+	}
+
 	www := srv.New(
 		http.NewServeMux(),
+		_handlers,
 		logger,
 		cfg,
 	)
