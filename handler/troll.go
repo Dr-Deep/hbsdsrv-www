@@ -10,6 +10,11 @@ import (
  * troll some folks
  */
 
+const trollGitConfigFile = `[user]
+name = your mommy
+email = your.mom@outlook.com
+`
+
 type HandlerTroll struct{}
 
 func (h *HandlerTroll) IsAble(url *url.URL) bool {
@@ -18,6 +23,9 @@ func (h *HandlerTroll) IsAble(url *url.URL) bool {
 		return true
 
 	case "/.env":
+		return true
+
+	case "/.git/config":
 		return true
 
 	default:
@@ -39,6 +47,9 @@ func (h *HandlerTroll) Handle(w http.ResponseWriter, r *http.Request) error {
 
 	case "/.env":
 		msg = "sibbie"
+
+	case "/.git/config":
+		msg = trollGitConfigFile
 	}
 
 	fmt.Fprintf(w, "%s", msg)
