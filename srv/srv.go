@@ -10,7 +10,6 @@ import (
 
 	"github.com/Dr-Deep/hbsdsrv-www/config"
 	"github.com/Dr-Deep/logging-go"
-	_ "github.com/Dr-Deep/logging-go"
 )
 
 type WWWServer struct {
@@ -26,16 +25,14 @@ type WWWServer struct {
 	sync.Mutex
 }
 
-func New(mux *http.ServeMux, handler []Handler, logger *logging.Logger, cfg *config.Configuration) *WWWServer {
-
-	var www = &WWWServer{
+func New(mux *http.ServeMux, handlers []Handler, logger *logging.Logger, cfg *config.Configuration) *WWWServer {
+	return &WWWServer{
 		mux:          mux,
+		handlers:     handlers,
 		logger:       logger,
 		cfg:          cfg,
 		interuptSigs: make(chan os.Signal, 1),
 	}
-
-	return www
 }
 
 func (www *WWWServer) Start() error {
