@@ -59,10 +59,11 @@ func Error(w http.ResponseWriter, code int) {
 		fmt.Printf("Error render: %s", err.Error())
 	}
 
-	http.Error(w, errorResp, code)
+	// Respond
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.WriteHeader(code)
+	w.Write([]byte(errorResp))
 }
-
-// Error render: %!w(*errors.errorString=&{template: "html/error.html" is an incomplete or empty template})
 
 func renderErrorHTML(errType, errMessage string) (string, error) {
 	return renderHTMLTemplate(
