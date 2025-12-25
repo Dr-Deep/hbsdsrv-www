@@ -85,7 +85,7 @@ func main() {
 	)
 
 	var _handlers = []srv.Handler{
-		&handler.HandlerIndex{},
+		handler.NewHandlerIndex(),
 		handler.NewHandlerAssets(logger, cfg),
 		&handler.HandlerContent{},
 		&handler.HandlerTroll{},
