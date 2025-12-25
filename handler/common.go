@@ -13,17 +13,17 @@ import (
 )
 
 const (
-	indexHTML = "html/index.html"
-	errorHTML = "html/error.html"
-	baseHTML  = "html/base.html"
+	indexHTML = "./html/index.html"
+	errorHTML = "./html/error.html"
+	baseHTML  = "./html/base.html"
 
 	assetsURL = "/assets"
 )
 
 /*
 HTMLDirectory   string   `yaml:"html-dir"`
-		WWWDirectory    string   `yaml:"www-dir"`
-		AssetsDirectory string   `yaml:"assets-dir"`
+WWWDirectory    string   `yaml:"www-dir"`
+AssetsDirectory string   `yaml:"assets-dir"`
 */
 
 // returns rendered html, error
