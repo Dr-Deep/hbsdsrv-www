@@ -28,7 +28,7 @@ AssetsDirectory string   `yaml:"assets-dir"`
 
 // returns rendered html, error
 func renderHTMLTemplate(templateFilePath string, templateData any) (string, error) {
-	t, err := template.New(templateFilePath).
+	t, err := template.New(filepath.Base(templateFilePath)).
 		Funcs(template.FuncMap{
 			"safeHTML": func(s template.HTML) template.HTML { return s },
 		}).
@@ -38,7 +38,7 @@ func renderHTMLTemplate(templateFilePath string, templateData any) (string, erro
 	}
 
 	var buf = &bytes.Buffer{}
-	if err := t.Execute(buf, templateData); err != nil {
+	if err := t.ExecuteTemplate(buf, filepath.Base(templateFilePath), templateData); err != nil {
 		return "", err
 	}
 
