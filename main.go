@@ -13,22 +13,6 @@ import (
 	"github.com/Dr-Deep/logging-go"
 )
 
-/*
-server_name hbsdsrv.1337.cx vmd171781.contaboserver.net;
-location /www {
-	proxy_pass         https://localhost:8082;
-	rewrite ^/www(/.*) $1 break;
-	proxy_http_version 1.1;
-	proxy_set_header   Host $host;
-	proxy_set_header   X-Real-IP $remote_addr;
-	proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
-	proxy_set_header   X-Forwarded-Proto $scheme;
-	proxy_connect_timeout   1m;
-	proxy_send_timeout      1m;
-   	proxy_read_timeout      1m;
-}
-*/
-
 const (
 	defaultConfigFilePath = "./config.yml"
 	rwForOwnerOnlyPerm    = 0o600

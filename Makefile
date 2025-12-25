@@ -15,7 +15,10 @@ build: clean
 	@echo "Building $(BINARY_NAME)..."
 	@mkdir -p $(BUILD_DIR)
 	$(GOCMD) mod tidy
-	$(GOCMD) build -o $(BUILD_DIR)/$(BINARY_NAME) $(SRC)
+	CGO_ENABLED=0 $(GOCMD) build -o $(BUILD_DIR)/$(BINARY_NAME) $(SRC)
+
+run: build
+	$(BUILD_DIR)/$(BINARY_NAME)
 
 install: build
 	@echo "Installing to /usr/local/bin/$(BINARY_NAME)"

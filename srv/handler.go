@@ -11,6 +11,7 @@ func (www *WWWServer) Handler(w http.ResponseWriter, r *http.Request) {
 	//r.Header
 
 	//switch?
-
 	fmt.Fprintln(w, "requested: ", r.RequestURI)
+
+	www.logger.Info(r.RequestURI)
 }
