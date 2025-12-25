@@ -23,7 +23,7 @@ type HandlerContent struct {
 }
 
 func NewHandlerContent(logger *logging.Logger, cfg *config.Configuration) *HandlerContent {
-	contentPaths, err := gen(cfg.Application.WWWDirectory, contentURL)
+	contentPaths, err := genFsMap(cfg.Application.WWWDirectory, contentURL)
 	if err != nil {
 		logger.Error("gen Error", err.Error())
 	}
@@ -52,7 +52,6 @@ func (h *HandlerContent) Handle(w http.ResponseWriter, r *http.Request) error {
 	// valid path?
 	fsPath, oke := h.contentPaths[r.URL.Path]
 	if !oke {
-		h.logger.Info("CONTENT MAP", fmt.Sprintf("%#v", h.contentPaths))
 		Error(w, http.StatusNotFound)
 		return nil
 	}

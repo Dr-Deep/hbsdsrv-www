@@ -61,9 +61,9 @@ func renderMarkdownToHTML(_markdown []byte) string {
 	return string(markdown.Render(doc, r))
 }
 
-// returns assetPaths:map[urlPath]fsPath
-func gen(assetDir, url string) (map[string]string, error) {
-	var assetPaths = map[string]string{}
+// returns map[urlPath]fsPath
+func genFsMap(directory, urlPrefix string) (map[string]string, error) {
+	var pathMap = map[string]string{}
 
 	// walk & store
 	var walkFunc = func(path string, info os.FileInfo, err error) error {
@@ -73,24 +73,24 @@ func gen(assetDir, url string) (map[string]string, error) {
 
 		if !info.IsDir() {
 			// relative path
-			relativePath, err := filepath.Rel(assetDir, path)
+			relativePath, err := filepath.Rel(directory, path)
 			if err != nil {
 				return fmt.Errorf("walkFunc curErr: %s: %s", path, err.Error())
 			}
 
-			uriPath := url + "/" + relativePath
-			assetPaths[uriPath] = path
+			uriPath := urlPrefix + "/" + relativePath
+			pathMap[uriPath] = path
 		}
 
 		return nil
 	}
 
 	if err := filepath.Walk(
-		assetDir,
+		directory,
 		walkFunc,
 	); err != nil {
 		return nil, err
 	}
 
-	return assetPaths, nil
+	return pathMap, nil
 }
