@@ -1,0 +1,12 @@
+server:
+    address: "127.0.0.1:8082"
+
+application:
+    handler: []
+    allowed-origins: []
+    html-dir: "./html"
+    www-dir: "./www"
+
+logging:
+    file: ""
+    level: "debug"

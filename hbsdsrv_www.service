@@ -1,0 +1,41 @@
+#!/bin/sh
+#
+# PROVIDE: hbsdsrv_www
+# REQUIRE: DAEMON NETWORKING
+# KEYWORD: shutdown
+
+#
+# Add these lines to /etc/rc.conf.local or /etc/rc.conf
+# to enable this service:
+#
+# hbsdsrv_www_enable (bool):    Set to NO by default.
+#
+# hbsdsrv_www_flags: (string):  Custom Argv
+#
+# hbsdsrv_www_config (string):  Config File
+#
+# hbsdsrv_www_logfile (string): Log File
+
+. /etc/rc.subr
+
+name=hbsdsrv_www
+rcvar=hbsdsrv_www_enable
+
+command="/usr/local/bin/hbsdsrv-www"
+
+load_rc_config $name
+
+# /etc/rc.conf Vars
+hbsdsrv_wwww_enable=${hbsdsrv_www_enable-"NO"}
+hbsdsrv_wwww_flags=${hbsdsrv_www_flags:-""}
+hbsdsrv_wwww_config=${hbsdsrv_www_config:-"/usr/local/hbsdsrv-build/config.yml"}
+hbsdsrv_wwww_logfile=${hbsdsrv_www_logfile:-"/var/log/${name}.log"}
+
+pidfile=${hbsdsrv_www_pidfile-"/var/run/${name}.pid"}
+logfile=${hbsdsrv_www_logfile-"/var/log/${name}.log"}
+
+required_files=${hbsdsrv_www_config}
+
+
+command_args="--cfg ${hbsdsrv_www_config} --log ${hbsdsrv_www_logfile} ${hbsdsrv_www_flags}"
+run_rc_command "$1"
