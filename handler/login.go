@@ -5,6 +5,9 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+
+	"github.com/Dr-Deep/hbsdsrv-www/config"
+	"github.com/Dr-Deep/logging-go"
 )
 
 //login => auth
@@ -13,9 +16,12 @@ import (
 type HandlerLogin struct {
 	loginSite []byte
 	//creds
+
+	cfg    *config.Configuration
+	logger *logging.Logger
 }
 
-func NewHandlerLogin() *HandlerLogin {
+func NewHandlerLogin(logger *logging.Logger, cfg *config.Configuration) *HandlerLogin {
 	loginSite, err := os.ReadFile(loginHTML)
 	if err != nil {
 		panic(err)
@@ -23,6 +29,8 @@ func NewHandlerLogin() *HandlerLogin {
 
 	return &HandlerLogin{
 		loginSite: loginSite,
+		cfg:       cfg,
+		logger:    logger,
 	}
 }
 

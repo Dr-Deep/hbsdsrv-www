@@ -7,6 +7,9 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+
+	"github.com/Dr-Deep/hbsdsrv-www/config"
+	"github.com/Dr-Deep/logging-go"
 )
 
 const trollGitConfigFile = `[user]
@@ -14,7 +17,17 @@ name = your mommy
 email = your.mom@outlook.com
 `
 
-type HandlerTroll struct{}
+type HandlerTroll struct {
+	cfg    *config.Configuration
+	logger *logging.Logger
+}
+
+func NewHandlerTroll(logger *logging.Logger, cfg *config.Configuration) *HandlerTroll {
+	return &HandlerTroll{
+		cfg:    cfg,
+		logger: logger,
+	}
+}
 
 func (h *HandlerTroll) IsAble(url *url.URL) bool {
 	switch url.Path {

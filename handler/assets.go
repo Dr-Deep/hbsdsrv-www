@@ -16,7 +16,9 @@ import (
 
 type HandlerAssets struct {
 	assetPaths map[string]string
-	logger     *logging.Logger
+
+	cfg    *config.Configuration
+	logger *logging.Logger
 }
 
 func NewHandlerAssets(logger *logging.Logger, cfg *config.Configuration) *HandlerAssets {

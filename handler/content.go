@@ -52,6 +52,7 @@ func (h *HandlerContent) Handle(w http.ResponseWriter, r *http.Request) error {
 	// valid path?
 	fsPath, oke := h.contentPaths[r.URL.Path]
 	if !oke {
+		h.logger.Info("CONTENT MAP", fmt.Sprintf("%#v", h.contentPaths))
 		Error(w, http.StatusNotFound)
 		return nil
 	}

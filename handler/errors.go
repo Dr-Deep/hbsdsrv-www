@@ -59,8 +59,6 @@ func Error(w http.ResponseWriter, code int) {
 	renderedError, err := renderErrorHTML(errorType, errorMessage)
 	if err == nil {
 		errorResp = renderedError
-	} else {
-		fmt.Printf("Error render: %s", err.Error())
 	}
 
 	// Respond

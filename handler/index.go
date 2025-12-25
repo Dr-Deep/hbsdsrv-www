@@ -4,6 +4,9 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+
+	"github.com/Dr-Deep/hbsdsrv-www/config"
+	"github.com/Dr-Deep/logging-go"
 )
 
 /*
@@ -12,9 +15,12 @@ import (
 
 type HandlerIndex struct {
 	indexSite []byte
+
+	cfg    *config.Configuration
+	logger *logging.Logger
 }
 
-func NewHandlerIndex() *HandlerIndex {
+func NewHandlerIndex(logger *logging.Logger, cfg *config.Configuration) *HandlerIndex {
 	indexSite, err := os.ReadFile(indexHTML)
 	if err != nil {
 		panic(err)
@@ -22,6 +28,8 @@ func NewHandlerIndex() *HandlerIndex {
 
 	return &HandlerIndex{
 		indexSite: indexSite,
+		cfg:       cfg,
+		logger:    logger,
 	}
 }
 

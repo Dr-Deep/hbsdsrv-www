@@ -78,23 +78,47 @@ func initLogger(logFilePath, logLevel string) (logger *logging.Logger) {
 	return logger
 }
 
-func main() {
-	var (
-		cfg    = initConfig(defaultConfigFilePath)
-		logger = initLogger(cfg.Logging.File, cfg.Logging.Level)
+func initHandlers(logger *logging.Logger, cfg *config.Configuration) []srv.Handler {
+	var handlers = []srv.Handler{}
+
+	handlers = append(
+		handlers,
+		handler.NewHandlerIndex(logger, cfg),
 	)
 
-	var _handlers = []srv.Handler{
+	handlers = append(
+		handlers,
+		handler.NewHandlerLogin(logger, cfg),
+	)
+
+	handlers = append(
+		handlers,
 		handler.NewHandlerAssets(logger, cfg),
-		handler.NewHandlerIndex(),
-		handler.NewHandlerLogin(),
-		&handler.HandlerContent{},
-		&handler.HandlerTroll{},
-	}
+	)
+
+	handlers = append(
+		handlers,
+		handler.NewHandlerContent(logger, cfg),
+	)
+
+	handlers = append(
+		handlers,
+		handler.NewHandlerTroll(logger, cfg),
+	)
+
+	return handlers
+}
+
+func main() {
+	var (
+		cfg      = initConfig(defaultConfigFilePath)
+		logger   = initLogger(cfg.Logging.File, cfg.Logging.Level)
+		handlers = initHandlers(logger, cfg)
+	)
 
 	www := srv.New(
 		http.NewServeMux(),
-		_handlers,
+		handlers,
 		logger,
 		cfg,
 	)
