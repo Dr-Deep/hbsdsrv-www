@@ -48,14 +48,26 @@ type HandlerContent struct {
 }
 
 func NewHandlerContent(logger *logging.Logger, cfg *config.Configuration) *HandlerContent {
-	contentPaths, err := genFsMap(cfg.Application.WWWDirectory, contentURL)
-	if err != nil {
-		logger.Error("gen Error", err.Error())
-	}
+	var (
+		contentPaths map[string]string
+
+		getContentPaths = func() {
+			_contentPaths, err := genFsMap(cfg.Application.WWWDirectory, contentURL)
+			if err != nil {
+				logger.Error("gen Error", err.Error())
+			}
+
+			contentPaths = _contentPaths
+		}
+	)
+
+	getContentPaths()
 
 	if err := genIndex(contentPaths); err != nil {
 		logger.Error("gen Error", err.Error())
 	}
+
+	getContentPaths()
 
 	return &HandlerContent{
 		contentPaths: contentPaths,
