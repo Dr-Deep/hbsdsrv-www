@@ -1,6 +1,6 @@
 module github.com/Dr-Deep/hbsdsrv-www
 
-go 1.25.4
+go 1.24.6
 
 require (
 	github.com/Dr-Deep/logging-go v0.0.0-20251002044224-80833ccb7b99
