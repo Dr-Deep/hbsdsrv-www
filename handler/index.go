@@ -1,16 +1,29 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 	"net/url"
+	"os"
 )
 
 /*
  * Generate Index (/www)
  */
 
-type HandlerIndex struct{}
+type HandlerIndex struct {
+	indexSite []byte
+}
+
+func NewHandlerIndex() *HandlerIndex {
+	indexSite, err := os.ReadFile(indexHTML)
+	if err != nil {
+		panic(err)
+	}
+
+	return &HandlerIndex{
+		indexSite: indexSite,
+	}
+}
 
 func (h *HandlerIndex) IsAble(url *url.URL) bool {
 	if url.Path == "/" || url.Path == "/index" || url.Path == "/index.html" {
@@ -22,11 +35,11 @@ func (h *HandlerIndex) IsAble(url *url.URL) bool {
 
 func (h *HandlerIndex) Handle(w http.ResponseWriter, r *http.Request) error {
 	if r.Method != http.MethodGet {
-		http.Error(w, "405 MethodNotAllowed", http.StatusMethodNotAllowed)
+		Error(w, http.StatusMethodNotAllowed)
 		return nil
 	}
 
-	fmt.Fprintf(w, "index.html?")
+	w.Write(h.indexSite)
 
 	return nil
 }
