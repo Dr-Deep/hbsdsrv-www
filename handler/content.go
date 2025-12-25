@@ -23,7 +23,7 @@ type HandlerContent struct {
 }
 
 func NewHandlerContent(logger *logging.Logger, cfg *config.Configuration) *HandlerContent {
-	contentPaths, err := gen(cfg.Application.WWWDirectory)
+	contentPaths, err := gen(cfg.Application.WWWDirectory, contentURL)
 	if err != nil {
 		logger.Error("gen Error", err.Error())
 	}

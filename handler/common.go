@@ -62,7 +62,7 @@ func renderMarkdownToHTML(_markdown []byte) string {
 }
 
 // returns assetPaths:map[urlPath]fsPath
-func gen(assetDir string) (map[string]string, error) {
+func gen(assetDir, url string) (map[string]string, error) {
 	var assetPaths = map[string]string{}
 
 	// walk & store
@@ -78,7 +78,7 @@ func gen(assetDir string) (map[string]string, error) {
 				return fmt.Errorf("walkFunc curErr: %s: %s", path, err.Error())
 			}
 
-			uriPath := assetsURL + "/" + relativePath
+			uriPath := url + "/" + relativePath
 			assetPaths[uriPath] = path
 		}
 

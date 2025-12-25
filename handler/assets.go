@@ -22,7 +22,7 @@ type HandlerAssets struct {
 }
 
 func NewHandlerAssets(logger *logging.Logger, cfg *config.Configuration) *HandlerAssets {
-	assetsPaths, err := gen(cfg.Application.AssetsDirectory)
+	assetsPaths, err := gen(cfg.Application.AssetsDirectory, assetsURL)
 	if err != nil {
 		logger.Error("gen Error", err.Error())
 	}
