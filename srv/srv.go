@@ -27,7 +27,12 @@ type WWWServer struct {
 
 func New(mux *http.ServeMux, logger *logging.Logger, cfg *config.Configuration) *WWWServer {
 
-	var www = &WWWServer{}
+	var www = &WWWServer{
+		mux:          mux,
+		logger:       logger,
+		cfg:          cfg,
+		interuptSigs: make(chan os.Signal, 1),
+	}
 
 	return www
 }
@@ -35,8 +40,7 @@ func New(mux *http.ServeMux, logger *logging.Logger, cfg *config.Configuration) 
 func (www *WWWServer) Start() error {
 	www.Lock()
 
-	// OS
-	www.interuptSigs = make(chan os.Signal, 1)
+	// OS Signals
 	signal.Notify(
 		www.interuptSigs,
 		syscall.SIGINT,
