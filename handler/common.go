@@ -57,19 +57,19 @@ func renderMarkdownToHTML(_markdown []byte) string {
 
 // returns assetPaths:map[urlPath]fsPath
 func gen(assetDir string) (map[string]string, error) {
-	var assetPaths map[string]string
+	var assetPaths = map[string]string{}
 
 	// walk & store
 	var walkFunc = func(path string, info os.FileInfo, err error) error {
 		if err != nil {
-			return fmt.Errorf("walkFunc lastErr", path, err.Error())
+			return fmt.Errorf("walkFunc lastErr: %s: %s", path, err.Error())
 		}
 
 		if !info.IsDir() {
 			// relative path
 			relativePath, err := filepath.Rel(assetDir, path)
 			if err != nil {
-				return fmt.Errorf("walkFunc curErr", path, err.Error())
+				return fmt.Errorf("walkFunc curErr: %s: %s", path, err.Error())
 			}
 
 			uriPath := assetsURL + "/" + relativePath
