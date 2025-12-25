@@ -15,6 +15,31 @@ import (
 	"github.com/Dr-Deep/logging-go"
 )
 
+// generates www/index.md file
+func genIndex(contentPaths map[string]string) error {
+	var (
+		index = strings.Builder{}
+	)
+	{ // Generate
+		index.WriteString("# Index.md - Overview\n")
+
+		for urlPath, fsPath := range contentPaths {
+			index.WriteString(
+				fmt.Sprintf("* [%s](%s)\n", fsPath, urlPath),
+			)
+		}
+	}
+
+	{ // store (should be public)
+		//nolint:gosec
+		if err := os.WriteFile(contentMdIndex, []byte(index.String()), 0444); err != nil { // read for everyone, write for none
+			return err
+		}
+	}
+
+	return nil
+}
+
 type HandlerContent struct {
 	contentPaths map[string]string
 
@@ -25,6 +50,10 @@ type HandlerContent struct {
 func NewHandlerContent(logger *logging.Logger, cfg *config.Configuration) *HandlerContent {
 	contentPaths, err := genFsMap(cfg.Application.WWWDirectory, contentURL)
 	if err != nil {
+		logger.Error("gen Error", err.Error())
+	}
+
+	if err := genIndex(contentPaths); err != nil {
 		logger.Error("gen Error", err.Error())
 	}
 

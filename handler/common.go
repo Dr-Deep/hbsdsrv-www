@@ -18,8 +18,9 @@ const (
 	errorHTML = "./html/error.html"
 	baseHTML  = "./html/base.html"
 
-	contentURL = "/www"
-	assetsURL  = "/assets"
+	contentURL     = "/www"
+	contentMdIndex = "./www/index.md"
+	assetsURL      = "/assets"
 )
 
 /*
